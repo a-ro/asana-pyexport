@@ -32,14 +32,33 @@ class AsanaAdapter:
             project_id,
             {
                 "opt_expand": "name, assignee, id, due_on, created_at, modified_at, completed, completed_at,"
-                " assignee, assignee_status, parent, notes"
+                " assignee, assignee_status, parent, notes, dependencies"
             },
         )
         return tasks
 
-    def generate_tasks_per_project(self) -> Iterator:
+    def get_sub_tasks(self, task_id):
+        subtasks = self.client.request(
+            "get",
+            f"/tasks/{task_id}/subtasks?opt_expand=name,id,due_on,created_at,modified_at,completed,completed_at,"
+            f"assignee,assignee_status",
+        )
+        return subtasks
+
+    def generate_tasks_per_project(self, is_including_subtasks: bool) -> Iterator:
         workspace_id = self.select_workspace()
-        projects = self.get_projects(workspace_id)
-        for project in projects:
-            tasks = self.get_tasks(project["id"])
+        project_iterator = self.get_projects(workspace_id)
+        for project in project_iterator:
+            task_iterator = self.get_tasks(project["id"])
+            if is_including_subtasks:
+                tasks = self.__create_tasks_with_subtasks(task_iterator)
+            else:
+                tasks = list(task_iterator)
             yield project, tasks
+
+    def __create_tasks_with_subtasks(self, task_iterator):
+        tasks = []
+        for task in task_iterator:
+            task["sub_tasks"] = list(self.get_sub_tasks(task["id"]))
+            tasks.append(task)
+        return tasks
