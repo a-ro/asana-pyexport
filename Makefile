@@ -6,4 +6,4 @@ install: ## Install project deps
 	poetry install
 
 format: ## Run Black formatter
-	poetry run black --line-length 120 asanapy
+	poetry run black --line-length 120 asanapyexport
