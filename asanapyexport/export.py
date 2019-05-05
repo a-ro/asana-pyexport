@@ -1,6 +1,6 @@
 import json
 
-from asanapyexport.wrapper import AsanaAdapter
+from asanapyexport.adapter import AsanaAdapter
 
 
 def export_projects_and_tasks_to_json(token: str, save_file_path: str, is_including_subtasks: bool) -> None:
