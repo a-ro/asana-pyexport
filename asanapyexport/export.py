@@ -1,5 +1,4 @@
 import json
-import logging
 
 from asanapyexport.wrapper import AsanaAdapter
 
@@ -14,7 +13,6 @@ def export_projects_and_tasks_to_json(token: str, save_file_path: str, is_includ
     asana = AsanaAdapter(token)
     json_projects = []
     for project, tasks in asana.generate_tasks_per_project(is_including_subtasks=is_including_subtasks):
-        logging.info(f"processing project: {project['name']}")
         json_projects.append(dict(project=project, tasks=tasks))
     with open(save_file_path, "w") as json_file:
         json.dump(json_projects, json_file)
