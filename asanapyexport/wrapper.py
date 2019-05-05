@@ -5,7 +5,7 @@ import asana
 from asanapyexport.util import user_selection
 
 
-class AsanaWrapper:
+class AsanaAdapter:
     def __init__(self, token, page_size=100):
         self.client = asana.Client.access_token(token)
         self.client.options["page_size"] = page_size
